@@ -1,10 +1,12 @@
-$().ready(function($) {});
+let worker; //web worker variable to run process on background
+document.addEventListener('DOMContentLoaded', init); // event when page is loaded
 
+//Function to generate anion and cation rows
 function generateCols() {
-    norow = $('#norows').val();
-    if (!$.isNumeric(norow)) { alert("Invalid input"); return; }
-    $('#first_table tbody').html('');
-    for (var i = 1; i <= norow; i++) {
+    norow = $('#norows').val(); //number of rows/collections to be considered
+    if (!$.isNumeric(norow)) { alert("Invalid input"); return; } //check if the input is number
+    $('#first_table tbody').html(''); //clean the table of step 1
+    for (var i = 1; i <= norow; i++) { //generate cation and anion rows with random values
         row = `<tr>
   			<td>C${i} <input type="text" id="c_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
   			<td>A${i} <input type="text" id="a_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
@@ -12,67 +14,44 @@ function generateCols() {
         $('#first_table tbody').append(row);
     }
 
-    $("#step2").show();
-    $("#step1").hide();
-    $("#resetBtn").show();
-    $(".process_section").show();
+    //hide and show sections
+    $("#step2").show(500);
+    $("#step1").hide(500);
+    $("#resetBtn").show(500);
+    $(".process_section").show(500);
 }
 
+//event at process button to start performing operations
 function CombineProcess() {
+    $("#process_loader").show();
     norow = $('#norows').val();
     if (!$.isNumeric(norow)) { alert("Invalid input"); return; }
     var C_array = [];
     var A_array = [];
 
     for (var i = 1; i <= norow; i++) {
-        C_array.push($("#c_input_" + i).val());
-        A_array.push($("#a_input_" + i).val());
+        C_array.push($("#c_input_" + i).val()); //getting cation data from inputboxes
+        A_array.push($("#a_input_" + i).val()); //getting anion data from inputboxes
     }
 
-    result = [];
-    ps_c = powerSet(C_array, "C");
-    ps_a = powerSet(A_array, "A");
-    //result = ps_c;
+    worker.postMessage({ 'C_array': C_array, 'A_array': A_array, 'opr': $("#operation").val() }); //sending data to the worker
+}
 
-    output_html = "";
-    for (var i = 0; i < ps_c.length; i++) {
-        c_name = "";
-        c_value = "";
-        $.each(ps_c[i], function(key, value) {
-            c_name = key;
-            c_value = value;
-        });
+//initializing the worker
+function init() {
 
-        for (var j = 0; j < ps_a.length; j++) {
-            a_name = "";
-            a_value = "";
-            $.each(ps_a[j], function(key, value) {
-                a_name = key;
-                a_value = value;
-            });
+    worker = new Worker('dist/js/power_set_worker.js?v=1.1'); //creating worker object
+    worker.addEventListener('message', workerMessaged); // creating listner event to receive message from worker
+    worker.addEventListener('error', workerError); // creating listner event to receive error message
 
-            ca_name = c_name + a_name;
+}
 
-            ca_value = 0;
-            switch ($("#operation").val()) {
-                case "add":
-                    ca_value = parseInt(c_value) + parseInt(a_value);
-                    break;
-                case "mul":
-                    ca_value = parseInt(c_value) * parseInt(a_value);
-                    break;
-                case "div":
-                    ca_value = parseFloat(c_value) / parseFloat(a_value);
-                    break;
-            }
-            result.push({ combination: ca_name, value: ca_value });
-        }
-
-    }
-
+//function is called when the worker is done processing and send back processed data
+function workerMessaged(ev) {
+    let data = ev.data;
 
     $('#result_table').DataTable({
-        data: result,
+        data: data,
         "columns": [
             { "data": "combination" },
             { "data": "value" },
@@ -83,53 +62,23 @@ function CombineProcess() {
         ]
     });
 
-    $(".result").show();
-    $(".process_section").hide();
+    $(".result").show(500);
+    $(".process_section").hide(500);
+    $("#process_loader").hide();
 }
 
-
-
-function powerSet(list, ch) {
-    var set = [],
-        listSize = list.length,
-        combinationsCount = (1 << listSize),
-        combination;
-
-    for (var i = 1; i < combinationsCount; i++) {
-
-        var sum = 0;
-        a_name = "";
-        for (var j = 0; j < listSize; j++) {
-
-            if ((i & (1 << j))) {
-
-                switch ($("#operation").val()) {
-                    case "add":
-                        sum += parseInt(list[j]);
-                        break;
-                    case "mul":
-                        sum += parseInt(list[j]);
-                        break;
-                    case "div":
-                        sum += parseFloat(list[j]);
-                        break;
-                }
-                a_name += ch + (j + 1);
-            }
-        }
-        comb = {}
-        comb[a_name] = sum
-        set.push(comb);
-    }
-    return set;
+//worker through errors here
+function workerError(err) {
+    console.log(err.message, err.filename);
 }
 
+//reset button to go back where started
 function reset() {
     if ($.fn.dataTable.isDataTable('#result_table'))
         $('#result_table').DataTable().clear().draw().destroy();
-    $("#step2").hide();
-    $(".result").hide();
-    $("#resetBtn").hide();
-    $("#step1").show();
+    $("#step2").hide(500);
+    $(".result").hide(500);
+    $("#resetBtn").hide(500);
+    $("#step1").show(500);
 
 }
