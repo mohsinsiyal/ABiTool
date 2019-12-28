@@ -37,7 +37,7 @@
     <div id="step1">
 
       <div class="form-group">
-        <label for="norows">Number of Rows</label>
+        <label for="norows">Number of Collections</label>
         <input type="text" class="form-control" placeholder="Enter number" id="norows" value="4">
       </div>
 
