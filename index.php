@@ -91,13 +91,6 @@
 
   </div>
 
-<!--   <footer>
-    <div>
-      <p>ABi Tool <a href="mailto:dev.mohsinsiyal@gmail.com?subject=feedback" style="float: right;">email me</a></p>
-
-    </div>
-
-  </footer> -->
   <div class="margin-50"></div>
 </body>
 
