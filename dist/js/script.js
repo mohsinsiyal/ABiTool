@@ -8,8 +8,8 @@ function generateCols() {
     $('#first_table tbody').html(''); //clean the table of step 1
     for (var i = 1; i <= norow; i++) { //generate cation and anion rows with random values
         row = `<tr>
-  			<td>C${i} <input type="text" id="c_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
-  			<td>A${i} <input type="text" id="a_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
+  			<td>C${i} <input type="text" class="form-control" id="c_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
+  			<td>A${i} <input type="text" class="form-control" id="a_input_${i}" value="${Math.floor((Math.random() * 100) + 1)}"></td>
   		</tr>`;
         $('#first_table tbody').append(row);
     }
@@ -24,6 +24,7 @@ function generateCols() {
 //event at process button to start performing operations
 function CombineProcess() {
     $("#process_loader").show();
+    $("#process_btn").attr("disabled","")
     norow = $('#norows').val();
     if (!$.isNumeric(norow)) { alert("Invalid input"); return; }
     var C_array = [];
@@ -80,5 +81,6 @@ function reset() {
     $(".result").hide(500);
     $("#resetBtn").hide(500);
     $("#step1").show(500);
+    $("#process_btn").removeAttr("disabled")
 
 }

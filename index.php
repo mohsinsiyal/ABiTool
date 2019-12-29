@@ -67,7 +67,7 @@
           </select>
         </div>
 
-        <button type="button" class="btn btn-primary" style="float: right;" onclick="CombineProcess()"><i id="process_loader" style="display: none" class="fa fa-circle-o-notch fa-spin"></i> Process</button>
+        <button type="button" class="btn btn-primary" id="process_btn" style="float: right;" onclick="CombineProcess()"><i id="process_loader" style="display: none" class="fa fa-circle-o-notch fa-spin"></i> Process</button>
       </div>
 
     </div>
