@@ -1,3 +1,10 @@
+/* 
+   Author: Mohsin Raza Siyal
+   Version: 1.0.0
+   File Description: Web worker JS file of the ABiTool
+*/
+
+
 self.addEventListener('message', (ev) => {
     let data = ev.data;
     C_array = data.C_array;

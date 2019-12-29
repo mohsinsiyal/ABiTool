@@ -1,3 +1,10 @@
+/* 
+   Author: Mohsin Raza Siyal
+   Version: 1.0.0
+   File Description: Main JS file of the ABiTool
+*/
+
+
 let worker; //web worker variable to run process on background
 document.addEventListener('DOMContentLoaded', init); // event when page is loaded
 
